@@ -2,13 +2,12 @@
     "name": "udacity-c2-image-filter",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "clean": "rimraf www/ || true",
-        "build": "npm run clean && tsc && copy package.json www && mkdir www\\tmp\\ && cd www && 7z a Archive.zip . && cd ..",
+        "build": "npm run clean && tsc && copy .npmrc www &&  copy package.json www && mkdir www\\tmp\\ && cd www && 7z a Archive.zip . && cd ..",
         "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
-        "start": "node ./www/server.js"
+        "start": "node server.js"
     },
     "repository": {
         "type": "git",
