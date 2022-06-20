@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
-import { STATUS_CODES } from 'http';
+
 
 (async () => {
 
@@ -38,21 +38,27 @@ import { STATUS_CODES } from 'http';
         res.status(200).send("try GET /filteredimage?image_url={{}}")
     });
 
-    app.get("/filteredimage/", async (req: express.Request, res: express.Response): Promise<void> => {
-        console.log(req)
-        console.log(req.query)
+    app.get("/filteredimage", async (req: express.Request, res: express.Response): Promise<void> => {
         //valid query image_url
         if (!req.query.image_url) {
             res.status(404).send({ 'message': 'image_url is not valid' })
         }
+
         //call filterImageFromURL(image_url) to filter the image
         const image_url = req.query.image_url
-        const path_image = await filterImageFromURL(image_url as string)
+        filterImageFromURL(image_url as string).then((_value: string) => {
+            res.status(200).sendFile(_value, async () => {
+                deleteLocalFiles([_value])
+            }
+            )
+        }).catch((_err: any) => {
+            res.status(404).send({ 'error': _err.message })
+        })
         //send res and delete file local
-        res.status(200).sendFile(path_image, async () => {
-            deleteLocalFiles([path_image])
-        }
-        )
+
+
+
+
     })
 
     // Start the Server
