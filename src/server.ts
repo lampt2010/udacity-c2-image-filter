@@ -34,32 +34,26 @@ import { STATUS_CODES } from 'http';
 
     // Root Endpoint
     // Displays a simple message to the user
-    app.get("/", async (req, res) => {
-        res.send("try GET /filteredimage?image_url={{}}")
+    app.get("/", async (req: express.Request, res: express.Response) => {
+        res.status(200).send("try GET /filteredimage?image_url={{}}")
     });
 
-    app.get("/filteredimage", async (req, res) => {
+    app.get("/filteredimage/", async (req: express.Request, res: express.Response): Promise<void> => {
         console.log(req)
         console.log(req.query)
         //valid query image_url
         if (!req.query.image_url) {
-            res.send({ 'message': 'image_url is not valid' })
+            res.status(404).send({ 'message': 'image_url is not valid' })
         }
         //call filterImageFromURL(image_url) to filter the image
         const image_url = req.query.image_url
         const path_image = await filterImageFromURL(image_url as string)
         //send res and delete file local
-        res.sendFile(path_image, async () => {
+        res.status(200).sendFile(path_image, async () => {
             deleteLocalFiles([path_image])
         }
         )
-
-
-
     })
-
-
-
 
     // Start the Server
     app.listen(port, () => {
